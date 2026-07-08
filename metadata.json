@@ -1,0 +1,6 @@
+{
+  "name": "High Quality Enterprise",
+  "description": "A production-ready retail Point of Sale (POS) system for High Quality Enterprise, featuring Cloud Firestore backend with client-side offline persistence, paginated logging, and automated Bhutanese GST calculations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

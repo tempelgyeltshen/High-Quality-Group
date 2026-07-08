@@ -1,0 +1,214 @@
+{
+  "users": {
+    "admin": {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+      "role": "admin"
+    },
+    "cashier": {
+      "id": 2,
+      "username": "cashier",
+      "password_hash": "b4c94003c562bb0d89535eca77f07284fe560fd48a7cc1ed99f0a56263d616ba",
+      "role": "cashier"
+    }
+  },
+  "products": {
+    "302450": {
+      "item_code": "302450",
+      "product_name": "Measuring Tape 5m Heavy Duty",
+      "retail_price": 250,
+      "stock_qty": 18
+    },
+    "501221": {
+      "item_code": "501221",
+      "product_name": "WD-40 Multi-Use Spray 400ml",
+      "retail_price": 420,
+      "stock_qty": 37
+    },
+    "880120": {
+      "item_code": "880120",
+      "product_name": "Dewalt Cordless Drill 18V",
+      "retail_price": 4500,
+      "stock_qty": 11
+    },
+    "880121": {
+      "item_code": "880121",
+      "product_name": "Screwdriver Set 6pcs",
+      "retail_price": 650,
+      "stock_qty": 23
+    },
+    "900113": {
+      "item_code": "900113",
+      "product_name": "Bosch Armature GWS 6-100",
+      "retail_price": 1950,
+      "stock_qty": 15
+    },
+    "900114": {
+      "item_code": "900114",
+      "product_name": "Bosch Carbon Brush",
+      "retail_price": 180,
+      "stock_qty": 49
+    },
+    "900115": {
+      "item_code": "900115",
+      "product_name": "Makita Angle Grinder 4\"",
+      "retail_price": 3200,
+      "stock_qty": 6
+    },
+    "547635765": {
+      "item_code": "547635765",
+      "product_name": "Mouse",
+      "retail_price": 100,
+      "stock_qty": 40
+    }
+  },
+  "employees": {
+    "HQG-BLHT-T001": {
+      "employee_code": "HQG-BLHT-T001",
+      "employee_name": "Dorji",
+      "discount_rate": 0.2
+    },
+    "EMP102": {
+      "employee_code": "EMP102",
+      "employee_name": "Karma",
+      "discount_rate": 0.2
+    },
+    "EMP103": {
+      "employee_code": "EMP103",
+      "employee_name": "Pema",
+      "discount_rate": 0.15
+    }
+  },
+  "sales": {
+    "SL-20260708063550-4269": {
+      "sale_no": "SL-20260708063550-4269",
+      "transaction_date": "2026-07-08T06:35:50.385Z",
+      "total_amount": 420,
+      "discount_applied": 84,
+      "net_amount": 352.8,
+      "payment_method": "Cash",
+      "customer_name": "Walk-In Customer",
+      "paid_amount": 352.8,
+      "status": "completed",
+      "items": [
+        {
+          "item_code": "501221",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 420,
+          "subtotal": 420
+        }
+      ]
+    },
+    "SL-20260708064536-3819": {
+      "sale_no": "SL-20260708064536-3819",
+      "transaction_date": "2026-07-08T06:45:36.018Z",
+      "total_amount": 6600,
+      "discount_applied": 0,
+      "net_amount": 6930,
+      "payment_method": "Online (BOB)",
+      "customer_name": "Walk-In Customer",
+      "paid_amount": 6930,
+      "status": "completed",
+      "items": [
+        {
+          "item_code": "880121",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 650,
+          "subtotal": 650
+        },
+        {
+          "item_code": "302450",
+          "product_name": "",
+          "quantity": 11,
+          "unit_price": 250,
+          "subtotal": 2750
+        },
+        {
+          "item_code": "900115",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 3200,
+          "subtotal": 3200
+        }
+      ]
+    },
+    "SL-20260708064639-5856": {
+      "sale_no": "SL-20260708064639-5856",
+      "transaction_date": "2026-07-08T06:46:39.745Z",
+      "total_amount": 3800,
+      "discount_applied": 0,
+      "net_amount": 3990,
+      "payment_method": "Credit",
+      "customer_name": "Walk-In Customer",
+      "paid_amount": 0,
+      "status": "unpaid",
+      "items": [
+        {
+          "item_code": "501221",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 420,
+          "subtotal": 420
+        },
+        {
+          "item_code": "900115",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 3200,
+          "subtotal": 3200
+        },
+        {
+          "item_code": "900114",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 180,
+          "subtotal": 180
+        }
+      ]
+    },
+    "SL-20260708080038-9154": {
+      "sale_no": "SL-20260708080038-9154",
+      "transaction_date": "2026-07-08T08:00:38.277Z",
+      "total_amount": 5820,
+      "discount_applied": 873,
+      "net_amount": 5194.35,
+      "payment_method": "Cash",
+      "customer_name": "Walk-In Customer",
+      "paid_amount": 5194.35,
+      "status": "completed",
+      "items": [
+        {
+          "item_code": "880121",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 650,
+          "subtotal": 650
+        },
+        {
+          "item_code": "302450",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 250,
+          "subtotal": 250
+        },
+        {
+          "item_code": "501221",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 420,
+          "subtotal": 420
+        },
+        {
+          "item_code": "880120",
+          "product_name": "",
+          "quantity": 1,
+          "unit_price": 4500,
+          "subtotal": 4500
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System operator/user session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "number", "description": "Numeric ID" },
+        "username": { "type": "string" },
+        "password_hash": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "cashier"] }
+      },
+      "required": ["username", "password_hash", "role"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Inventory product item",
+      "type": "object",
+      "properties": {
+        "item_code": { "type": "string" },
+        "product_name": { "type": "string" },
+        "retail_price": { "type": "number" },
+        "stock_qty": { "type": "number" }
+      },
+      "required": ["item_code", "product_name", "retail_price", "stock_qty"]
+    },
+    "Employee": {
+      "title": "Employee",
+      "description": "Store employee for eligible discount",
+      "type": "object",
+      "properties": {
+        "employee_code": { "type": "string" },
+        "employee_name": { "type": "string" },
+        "discount_rate": { "type": "number" },
+        "avatar_url": { "type": "string" }
+      },
+      "required": ["employee_code", "employee_name", "discount_rate"]
+    },
+    "SaleItem": {
+      "title": "SaleItem",
+      "description": "Embedded item in a sale document",
+      "type": "object",
+      "properties": {
+        "item_code": { "type": "string" },
+        "product_name": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unit_price": { "type": "number" },
+        "subtotal": { "type": "number" }
+      },
+      "required": ["item_code", "quantity", "unit_price", "subtotal"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "A POS transaction record",
+      "type": "object",
+      "properties": {
+        "sale_no": { "type": "string" },
+        "transaction_date": { "type": "string" },
+        "total_amount": { "type": "number" },
+        "discount_applied": { "type": "number" },
+        "net_amount": { "type": "number" },
+        "payment_method": { "type": "string" },
+        "customer_name": { "type": "string" },
+        "paid_amount": { "type": "number" },
+        "status": { "type": "string" },
+        "items": { "type": "array", "description": "Array of SaleItem" }
+      },
+      "required": ["sale_no", "transaction_date", "total_amount", "discount_applied", "net_amount", "payment_method", "items"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Collection of authorized users"
+    },
+    "products/{itemCode}": {
+      "schema": "Product",
+      "description": "Collection of product inventory items"
+    },
+    "employees/{employeeCode}": {
+      "schema": "Employee",
+      "description": "Collection of employees with eligible store discount"
+    },
+    "sales/{saleId}": {
+      "schema": "Sale",
+      "description": "Collection of completed or pending sales transactions"
+    }
+  }
+}

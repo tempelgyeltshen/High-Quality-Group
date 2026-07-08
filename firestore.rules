@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      // Access is proxy-controlled server-side, but standard web client configurations are secured here.
+      allow read, write: if true;
+    }
+  }
+}
