@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { Sale, User } from '../types';
 // @ts-ignore
-import logoImg from '../assets/images/Logo.png';
+import logoImg from '../assets/images/Logo.svg';
 
 interface ManageSalesProps {
   currentUser: User | null;

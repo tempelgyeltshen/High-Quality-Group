@@ -1,7 +1,7 @@
 import { ShieldCheck, User as UserIcon, LogOut, Star } from 'lucide-react';
 import { User } from '../types';
 // @ts-ignore
-import logoImg from '../assets/images/Logo.png';
+import logoImg from '../assets/images/Logo.svg';
 
 interface NavbarProps {
   currentUser: User | null;

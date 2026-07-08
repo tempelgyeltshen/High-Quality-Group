@@ -3,7 +3,7 @@ import { ShieldAlert, User, Key, ArrowRight } from 'lucide-react';
 import { User as UserType } from '../types';
 import { api } from '@/src/services/api';
 // @ts-ignore
-import logoImg from '../assets/images/Logo.png';
+import logoImg from '../assets/images/Logo.svg';
 
 interface LoginProps {
   onLoginSuccess: (user: UserType) => void;

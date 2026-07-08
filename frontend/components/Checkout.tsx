@@ -15,7 +15,7 @@ import {
 import { Product, Employee, CartItem, User } from '../types';
 import { api } from '@/src/services/api';
 // @ts-ignore
-import logoImg from '../assets/images/Logo.png';
+import logoImg from '../assets/images/Logo.svg';
 
 interface CheckoutProps {
   currentUser: User | null;

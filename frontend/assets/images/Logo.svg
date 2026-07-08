@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="80" viewBox="0 0 240 80" role="img" aria-label="Lifeline POS logo">
+  <rect width="240" height="80" rx="12" fill="#FFF7E8"/>
+  <rect x="12" y="12" width="56" height="56" rx="10" fill="#B91C1C"/>
+  <path d="M29 26h18v8H29zm0 14h18v8H29z" fill="#FFF"/>
+  <text x="84" y="36" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#1F2937">Lifeline</text>
+  <text x="84" y="58" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#6B7280">POS System</text>
+</svg>
