@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-warm-bg: #FEF7E5;
+  --color-warm-card: #FFFFFF;
+  --color-warm-header: #B25712;
+  --color-warm-primary: #FCC923;
+  --color-warm-gold: #B98B23;
+  --color-warm-btn: #CC9900;
+  --color-warm-text: #2F2F2F;
+}
+
+body {
+  background-color: #FEF7E5;
+  color: #2F2F2F;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom styles for POS physical terminal look & feel */
+.pos-orange-navbar {
+  background-color: #2F2F2F; /* Sleek Dark Charcoal background */
+  color: #ffffff;
+}
+
+.pos-yellow-bar {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+.pos-table-header {
+  background-color: #B25712;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+/* Focus styles for Honeywell barcode scanner simulation */
+.scanner-active-glow {
+  animation: pulse-border 1.5s infinite alternate;
+}
+
+@keyframes pulse-border {
+  from {
+    border-color: #e65100;
+    box-shadow: 0 0 5px rgba(230, 81, 0, 0.4);
+  }
+  to {
+    border-color: #ffb300;
+    box-shadow: 0 0 12px rgba(255, 179, 0, 0.8);
+  }
+}
+
+/* Receipt Print layout styling */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #receipt-print-area, #receipt-print-area * {
+    visibility: visible;
+  }
+  #receipt-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm; /* Standard thermal roll width */
+    font-size: 11px;
+    font-family: var(--font-mono);
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
