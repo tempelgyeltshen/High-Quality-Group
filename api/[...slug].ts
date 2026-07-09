@@ -1,17 +1,15 @@
 import { createApp } from '../backend/app.js';
 
-const appPromise = createApp(true);
+let cachedApp: any = null;
+
+async function getApp() {
+  if (!cachedApp) {
+    cachedApp = await createApp(true);
+  }
+  return cachedApp;
+}
 
 export default async function handler(req: any, res: any) {
-  const app = await appPromise;
-
-  return new Promise<void>((resolve, reject) => {
-    app(req, res, (err: unknown) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+  const app = await getApp();
+  return app(req, res);
 }

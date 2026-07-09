@@ -44,7 +44,7 @@ export default function Employees() {
   // New Cashier states
   const [newUsername, setNewUsername] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
-  const [newUserRole, setNewUserRole] = useState('cashier');
+  const [newUserRole, setNewUserRole] = useState<'admin' | 'cashier'>('cashier');
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
   // Reset Password states
@@ -1061,7 +1061,7 @@ export default function Employees() {
                   </label>
                   <select
                     value={newUserRole}
-                    onChange={(e) => setNewUserRole(e.target.value)}
+                    onChange={(e) => setNewUserRole(e.target.value as 'admin' | 'cashier')}
                     className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-800 font-bold focus:outline-none focus:border-[#B25712] focus:ring-1 focus:ring-[#B25712] focus:bg-white transition"
                   >
                     <option value="cashier">Cashier (Standard operator checkout access)</option>

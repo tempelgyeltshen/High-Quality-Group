@@ -433,7 +433,16 @@ export async function createApp(isProduction = false) {
   await initDatabase();
   await attachRoutes(app);
 
-  if (!isProduction) {
+  if (isProduction) {
+    // Serve static files from dist folder in production
+    const distPath = path.resolve(process.cwd(), 'dist');
+    app.use(express.static(distPath));
+    
+    // SPA fallback: serve index.html for all non-API routes
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  } else {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa'
