@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldAlert, User, Key, ArrowRight } from 'lucide-react';
 import { User as UserType } from '../types';
-import { api } from '@/src/services/api';
+import { api } from '../services/api';
 // @ts-ignore
 import logoImg from '../assets/images/Logo.svg';
 
 interface LoginProps {
-  onLoginSuccess: (user: UserType) => void;
+  onLoginSuccess: (user: UserType, token: string) => void;
 }
 
 export default function Login({ onLoginSuccess }: LoginProps) {
@@ -30,8 +30,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     setIsLoading(true);
 
     try {
-      const user = await api.login(username, password);
-      onLoginSuccess(user);
+      const { user, token } = await api.login(username, password);
+      onLoginSuccess(user, token);
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'Server connection error. Ensure the server is running.');
@@ -139,29 +139,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         {/* Secure Warning Label */}
         <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 text-center text-[9px] text-amber-700 font-bold uppercase tracking-wide leading-relaxed">
           🔒 Strictly Restricted: Authorized Personnel Only
-        </div>
-
-        {/* Default Credential Hints for testing convenience */}
-        <div className="bg-[#FEF7E5]/50 p-4 rounded-xl border border-amber-100/50 text-[10px] font-mono text-slate-500 flex flex-col gap-1.5 shadow-inner">
-          <p className="font-extrabold text-[#B25712] uppercase tracking-widest text-center border-b border-amber-100 pb-2 mb-1.5">
-            HQ SYSTEM OPERATOR DIRECTORY
-          </p>
-          <div className="flex justify-between">
-            <span>Admin Username:</span>
-            <span className="text-[#CC9900] font-bold">admin</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Admin Password:</span>
-            <span className="text-[#CC9900] font-bold">admin123</span>
-          </div>
-          <div className="flex justify-between border-t border-amber-100 pt-1.5 mt-1">
-            <span>Seeded Cashier:</span>
-            <span className="text-slate-600 font-bold">cashier</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Seeded Password:</span>
-            <span className="text-slate-600 font-bold">cashier123</span>
-          </div>
         </div>
       </div>
     </div>

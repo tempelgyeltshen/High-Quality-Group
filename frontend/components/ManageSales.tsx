@@ -17,6 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Sale, User } from '../types';
+import { playSound } from '../utils/sound';
 // @ts-ignore
 import logoImg from '../assets/images/Logo.svg';
 
@@ -58,42 +59,10 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
     setTimeout(() => setActionStatus(null), 5000);
   };
 
+  // Safely format monetary values from legacy/corrupt records that may lack numeric fields
+  const fmt = (value: any) => (Number(value) || 0).toFixed(2);
+
   // Web Audio sound player
-  const playSound = (type: 'beep' | 'success' | 'error') => {
-    try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      if (type === 'beep') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.1);
-      } else if (type === 'success') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        osc.start();
-        osc.frequency.setValueAtTime(1174.66, audioCtx.currentTime + 0.1);
-        osc.stop(audioCtx.currentTime + 0.3);
-      } else if (type === 'error') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
-        osc.start();
-        osc.frequency.setValueAtTime(147, audioCtx.currentTime + 0.12);
-        osc.stop(audioCtx.currentTime + 0.35);
-      }
-    } catch (e) {
-      // Audio context block fallback
-    }
-  };
-
   const fetchSales = async () => {
     setLoading(true);
     setError(null);
@@ -266,10 +235,11 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
 
     // Payment method filter
     if (paymentMethod !== 'All') {
+      const method = sale.payment_method || '';
       if (paymentMethod === 'Online') {
-        if (!sale.payment_method.startsWith('Online')) return false;
+        if (!method.startsWith('Online')) return false;
       } else {
-        if (sale.payment_method !== paymentMethod) return false;
+        if (method !== paymentMethod) return false;
       }
     }
 
@@ -291,9 +261,9 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
 
   // Summaries
   const totalInvoicesCount = filteredSales.length;
-  const grossBillings = filteredSales.reduce((acc, s) => acc + s.total_amount, 0);
-  const totalDiscounts = filteredSales.reduce((acc, s) => acc + s.discount_applied, 0);
-  const netRevenue = filteredSales.reduce((acc, s) => acc + s.net_amount, 0);
+  const grossBillings = filteredSales.reduce((acc, s) => acc + (Number(s.total_amount) || 0), 0);
+  const totalDiscounts = filteredSales.reduce((acc, s) => acc + (Number(s.discount_applied) || 0), 0);
+  const netRevenue = filteredSales.reduce((acc, s) => acc + (Number(s.net_amount) || 0), 0);
 
   return (
     <div className="flex-1 p-6 bg-[#FEF7E5] overflow-y-auto font-sans h-[calc(100vh-4rem)] select-none">
@@ -488,7 +458,7 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
         <div className="bg-[#2F2F2F] p-4 rounded-xl shadow-sm border border-[#2F2F2F]/10 flex items-center justify-between text-white">
           <div>
             <span className="text-[9px] font-black text-[#FEF7E5]/70 uppercase tracking-wider block">Gross Sales</span>
-            <span className="text-xl font-black text-[#FCC923] font-mono mt-1 block">Nu. {grossBillings.toFixed(2)}</span>
+            <span className="text-xl font-black text-[#FCC923] font-mono mt-1 block">Nu. {fmt(grossBillings)}</span>
           </div>
           <div className="bg-[#FEF7E5]/10 p-2.5 rounded-lg text-[#FCC923]">
             <TrendingUp className="w-5 h-5" />
@@ -498,7 +468,7 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
         <div className="bg-white p-4 rounded-xl shadow-sm border border-amber-100 flex items-center justify-between">
           <div>
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Total Discounts</span>
-            <span className="text-xl font-black text-rose-600 font-mono mt-1 block">Nu. {totalDiscounts.toFixed(2)}</span>
+            <span className="text-xl font-black text-rose-600 font-mono mt-1 block">Nu. {fmt(totalDiscounts)}</span>
           </div>
           <div className="bg-rose-50 p-2.5 rounded-lg text-rose-500">
             <Percent className="w-5 h-5" />
@@ -508,7 +478,7 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
         <div className="bg-[#2F2F2F] p-4 rounded-xl shadow-md border border-[#2F2F2F]/20 text-white flex items-center justify-between">
           <div>
             <span className="text-[9px] font-black text-[#FEF7E5]/70 uppercase tracking-wider block">Net Sales Volume</span>
-            <span className="text-xl font-black text-[#FCC923] font-mono mt-1 block">Nu. {netRevenue.toFixed(2)}</span>
+            <span className="text-xl font-black text-[#FCC923] font-mono mt-1 block">Nu. {fmt(netRevenue)}</span>
           </div>
           <div className="bg-[#FEF7E5]/10 p-2.5 rounded-lg text-[#FCC923]">
             <Coins className="w-5 h-5" />
@@ -587,8 +557,8 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
                           {sale.payment_method}
                         </span>
                       </td>
-                      <td className="px-4 py-2 text-right font-bold text-rose-600">-Nu. {sale.discount_applied.toFixed(2)}</td>
-                      <td className="px-4 py-2 text-right font-black text-slate-950">Nu. {sale.net_amount.toFixed(2)}</td>
+                      <td className="px-4 py-2 text-right font-bold text-rose-600">-Nu. {fmt(sale.discount_applied)}</td>
+                      <td className="px-4 py-2 text-right font-black text-slate-950">Nu. {fmt(sale.net_amount)}</td>
                       <td className="px-4 py-2 text-center">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider font-sans border ${
                           isReturned 
@@ -718,10 +688,10 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
                       <div key={idx} className="w-full text-[10px] leading-tight">
                         <div className="flex justify-between font-black text-slate-950">
                           <span>{item.product_name || `Product: ${item.item_code}`}</span>
-                          <span className="font-mono">Nu. {item.subtotal.toFixed(2)}</span>
+                          <span className="font-mono">Nu. {fmt(item.subtotal)}</span>
                         </div>
                         <div className="text-[9px] text-slate-500 mt-0.5">
-                          Code: {item.item_code} &bull; {item.quantity} Unit(s) &times; Nu. {item.unit_price.toFixed(2)}
+                          Code: {item.item_code} &bull; {item.quantity} Unit(s) &times; Nu. {fmt(item.unit_price)}
                         </div>
                       </div>
                     ))
@@ -738,18 +708,18 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
                 <div className="w-full text-[10px] space-y-1.5 font-mono">
                   <div className="flex justify-between text-slate-600 font-semibold">
                     <span>ITEMS SUB-TOTAL:</span>
-                    <span>Nu. {selectedSale.total_amount.toFixed(2)}</span>
+                    <span>Nu. {fmt(selectedSale.total_amount)}</span>
                   </div>
                   <div className="flex justify-between text-red-600 font-bold">
                     <span>TOTAL MARGIN DISCOUNT:</span>
-                    <span>-Nu. {selectedSale.discount_applied.toFixed(2)}</span>
+                    <span>-Nu. {fmt(selectedSale.discount_applied)}</span>
                   </div>
                   
                   <div className="h-[1px] bg-slate-200 my-1"></div>
 
                   <div className="flex justify-between font-black text-sm text-slate-950 pt-1">
                     <span>GRAND NET TOTAL:</span>
-                    <span>Nu. {selectedSale.net_amount.toFixed(2)}</span>
+                    <span>Nu. {fmt(selectedSale.net_amount)}</span>
                   </div>
 
                   <div className="h-[1px] bg-slate-200 my-1"></div>
@@ -760,7 +730,7 @@ export default function ManageSales({ currentUser }: ManageSalesProps) {
                   </div>
                   <div className="flex justify-between text-slate-500 text-[9px]">
                     <span className="font-sans font-bold">PAID AMOUNT:</span>
-                    <span className="font-black uppercase text-slate-800">Nu. {selectedSale.paid_amount !== undefined ? selectedSale.paid_amount.toFixed(2) : selectedSale.net_amount.toFixed(2)}</span>
+                    <span className="font-black uppercase text-slate-800">Nu. {fmt(selectedSale.paid_amount !== undefined ? selectedSale.paid_amount : selectedSale.net_amount)}</span>
                   </div>
                 </div>
 

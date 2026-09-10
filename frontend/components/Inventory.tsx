@@ -17,7 +17,8 @@ import {
 } from 'lucide-react';
 import { Product } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { api } from '@/src/services/api';
+import { api } from '../services/api';
+import { playSound } from '../utils/sound';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -51,40 +52,6 @@ export default function Inventory({ onInventoryChanged }: InventoryProps) {
   const [editStock, setEditStock] = useState('');
 
   // Web Audio sound generator
-  const playSound = (type: 'beep' | 'success' | 'error') => {
-    try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      if (type === 'beep') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.06, audioCtx.currentTime);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.08);
-      } else if (type === 'success') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
-        osc.start();
-        osc.frequency.setValueAtTime(1174.66, audioCtx.currentTime + 0.1);
-        osc.stop(audioCtx.currentTime + 0.25);
-      } else if (type === 'error') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      }
-    } catch (e) {
-      // Audio context block fallback
-    }
-  };
-
   const fetchProducts = async () => {
     setLoading(true);
     setError(null);

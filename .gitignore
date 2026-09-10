@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Firebase credentials (contains secrets)
+firebase-applet-config.json
+
+# Auto-generated session signing secret (contains secrets)
+.session-secret

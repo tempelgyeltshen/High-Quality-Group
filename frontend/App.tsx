@@ -2,38 +2,61 @@ import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
-import Checkout from './components/Checkout';
+import CheckoutPage from './components/checkout/CheckoutPage';
 import Inventory from './components/Inventory';
 import Employees from './components/Employees';
 import Reports from './components/Reports';
 import ManageSales from './components/ManageSales';
 import { User } from './types';
-import { ShieldCheck, Undo, HelpCircle } from 'lucide-react';
+import { api, setAuthToken, setUnauthorizedHandler } from './services/api';
+import { HelpCircle } from 'lucide-react';
+
+interface Session {
+  token: string;
+  user: User;
+}
+
+const SESSION_STORAGE_KEY = 'pos_session';
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [activeTab, setActiveTab] = useState<string>('sale');
   
   // Reload trigger to sync state updates between components
   const [syncCount, setSyncCount] = useState(0);
 
-  // Restore session from localStorage on app boot
+  // Restore session from localStorage on app boot and register the 401 handler
   useEffect(() => {
-    const saved = localStorage.getItem('pos_user_session');
+    const saved = localStorage.getItem(SESSION_STORAGE_KEY);
     if (saved) {
       try {
-        setCurrentUser(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.token && parsed.user && parsed.user.role) {
+          setAuthToken(parsed.token);
+          setSession({ token: parsed.token, user: parsed.user });
+        } else {
+          localStorage.removeItem(SESSION_STORAGE_KEY);
+        }
       } catch (e) {
-        localStorage.removeItem('pos_user_session');
+        localStorage.removeItem(SESSION_STORAGE_KEY);
       }
     }
+
+    // Session expired or revoked server-side: drop back to the login screen.
+    setUnauthorizedHandler(() => {
+      setSession(null);
+      setAuthToken(null);
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+    });
+
+    return () => setUnauthorizedHandler(null);
   }, []);
 
   // Auto-logout after 10 minutes of inactivity
   useEffect(() => {
-    if (!currentUser) return;
+    if (!session) return;
 
-    let timeoutId: any;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     const resetTimer = () => {
       if (timeoutId) clearTimeout(timeoutId);
@@ -61,11 +84,12 @@ export default function App() {
         window.removeEventListener(event, handleEvent);
       });
     };
-  }, [currentUser]);
+  }, [session]);
 
-  const handleLoginSuccess = (user: User) => {
-    setCurrentUser(user);
-    localStorage.setItem('pos_user_session', JSON.stringify(user));
+  const handleLoginSuccess = (user: User, token: string) => {
+    setAuthToken(token);
+    setSession({ token, user });
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ token, user }));
     // Clear any stale logout reason when logging in again
     localStorage.removeItem('pos_logout_reason');
     // Default to checkout view on entry
@@ -73,8 +97,11 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('pos_user_session');
+    // Invalidate the server-side session token (best effort)
+    api.logout().catch(() => {});
+    setSession(null);
+    setAuthToken(null);
+    localStorage.removeItem(SESSION_STORAGE_KEY);
   };
 
   const triggerSync = () => {
@@ -82,16 +109,18 @@ export default function App() {
   };
 
   // If user is not authenticated, render our custom terminal login
-  if (!currentUser) {
+  if (!session) {
     return <Login onLoginSuccess={handleLoginSuccess} />;
   }
+
+  const currentUser = session.user;
 
   // Helper to render the active workspace panel based on sidebar state
   const renderWorkspaceContent = () => {
     switch (activeTab) {
       case 'sale':
         return (
-          <Checkout 
+          <CheckoutPage 
             currentUser={currentUser} 
             onLogout={handleLogout} 
             onSaleSaved={triggerSync} 
@@ -165,7 +194,7 @@ export default function App() {
       {/* 2. Primary Layout (Sidebar + Content Workspace) */}
       <div className="flex flex-row flex-1 overflow-hidden">
         <Sidebar 
-          activeTab={activeTab === 'day-end' || activeTab === 'sale-register' || activeTab === 'credit-report' ? activeTab : activeTab}
+          activeTab={activeTab}
           setActiveTab={setActiveTab} 
           currentUser={currentUser} 
         />

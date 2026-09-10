@@ -62,6 +62,9 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }: Sideba
     }
   ];
 
+  // Admin-only groups (e.g. Inventory, Employees) are fully hidden for non-admin roles
+  const visibleMenuGroups = menuGroups.filter((group) => !group.adminOnly || isAdmin);
+
   return (
     <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-[#2F2F2F] border-r border-amber-100/10 text-slate-100 flex flex-col justify-between select-none shrink-0 font-sans shadow-lg transition-all duration-300`}>
       {/* Collapse Toggle Bar */}
@@ -76,9 +79,7 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }: Sideba
       </div>
 
       <div className="flex-1 py-4 overflow-y-auto">
-        {menuGroups.map((group) => {
-          const isLocked = group.adminOnly && !isAdmin;
-
+        {visibleMenuGroups.map((group) => {
           return (
             <div key={group.title} className="mb-6">
               {isCollapsed ? (
@@ -103,26 +104,18 @@ export default function Sidebar({ activeTab, setActiveTab, currentUser }: Sideba
                   return (
                     <li key={item.id}>
                       <button
-                        onClick={() => {
-                          if (!isLocked) {
-                            setActiveTab(item.id);
-                          }
-                        }}
-                        disabled={isLocked}
-                        title={item.label + (isLocked ? ' (Admin Locked)' : '')}
+                        onClick={() => setActiveTab(item.id)}
+                        title={item.label}
                         className={`w-full flex items-center transition duration-150 border-l-4 cursor-pointer ${
                           isCollapsed ? 'justify-center py-3.5 px-0' : 'gap-3 px-5 py-3 text-xs text-left'
                         } ${
-                          isLocked
-                            ? 'opacity-30 cursor-not-allowed text-slate-600 border-transparent'
-                            : isActive
+                          isActive
                             ? 'bg-[#FEF7E5]/10 border-[#CC9900] text-[#FCC923] font-bold'
                             : 'border-transparent text-slate-300 hover:bg-white/5 hover:text-[#FCC923]'
                         }`}
                       >
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#FCC923]' : 'text-slate-400'}`} />
                         {!isCollapsed && <span className="flex-1">{item.label}</span>}
-                        {!isCollapsed && isLocked && <Lock className="w-3 h-3 text-slate-600" />}
                       </button>
                     </li>
                   );

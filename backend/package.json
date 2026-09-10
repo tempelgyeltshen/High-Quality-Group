@@ -1,0 +1,25 @@
+{
+  "name": "pos-backend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild server.ts --bundle --platform=node --format=cjs --sourcemap --external:vite --outfile=../dist/server.cjs",
+    "start": "node ../dist/server.cjs",
+    "lint": "tsc --noEmit",
+    "test": "node --import tsx --test tests/password.test.ts tests/auth.test.ts tests/local-fallback-guard.test.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "firebase": "^12.15.0",
+    "high-quality-group-pos": "file:.."
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.4.3"
+  }
+}
