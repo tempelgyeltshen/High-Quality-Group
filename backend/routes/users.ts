@@ -4,6 +4,7 @@ import {
   getUserByUsername, hashPassword,
 } from '../database/index.js';
 import { requireAdmin } from '../middleware/auth.js';
+import { LocalDbWriteProhibitedError } from '../database/connection.js';
 
 const router = Router();
 
@@ -39,6 +40,10 @@ router.post('/', async (req, res) => {
     const newUser = await createUser(username, hashPassword(password), role);
     res.status(201).json(newUser);
   } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(500).json({ error: err.message || 'Failed to create user account' });
   }
 });
@@ -57,7 +62,11 @@ router.put('/:username/password', async (req, res) => {
       return;
     }
     res.json({ message: 'Password updated successfully' });
-  } catch {
+  } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(500).json({ error: 'Failed to update user password' });
   }
 });
@@ -71,6 +80,10 @@ router.delete('/:username', async (req, res) => {
     }
     res.json({ message: 'User deleted successfully' });
   } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(400).json({ error: err.message || 'Failed to delete user' });
   }
 });

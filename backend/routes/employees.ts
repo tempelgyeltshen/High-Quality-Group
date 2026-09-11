@@ -3,6 +3,7 @@ import {
   getEmployees, getEmployeeByCode, addEmployee, updateEmployee, deleteEmployee,
 } from '../database/index.js';
 import { requireAdmin } from '../middleware/auth.js';
+import { LocalDbWriteProhibitedError } from '../database/connection.js';
 
 const router = Router();
 
@@ -56,7 +57,11 @@ router.post('/', requireAdmin, async (req, res) => {
     };
     await addEmployee(emp);
     res.status(201).json(emp);
-  } catch {
+  } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(500).json({ error: 'Failed to add employee' });
   }
 });
@@ -84,7 +89,11 @@ router.put('/:code', requireAdmin, async (req, res) => {
       return;
     }
     res.json({ employee_code: req.params.code, employee_name, discount_rate: rate, avatar_url: avatar_url || '' });
-  } catch {
+  } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(500).json({ error: 'Failed to update employee' });
   }
 });
@@ -97,7 +106,11 @@ router.delete('/:code', requireAdmin, async (req, res) => {
       return;
     }
     res.json({ message: 'Employee deleted successfully' });
-  } catch {
+  } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(500).json({ error: 'Failed to delete employee' });
   }
 });

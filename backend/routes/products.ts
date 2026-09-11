@@ -3,6 +3,7 @@ import {
   getProducts, getProductByCode, addProduct, updateProduct, deleteProduct,
 } from '../database/index.js';
 import { requireAdmin } from '../middleware/auth.js';
+import { LocalDbWriteProhibitedError } from '../database/connection.js';
 
 const router = Router();
 
@@ -61,7 +62,11 @@ router.post('/', requireAdmin, async (req, res) => {
     };
     await addProduct(p);
     res.status(201).json(p);
-  } catch {
+  } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(500).json({ error: 'Failed to add product' });
   }
 });
@@ -95,7 +100,11 @@ router.put('/:code', requireAdmin, async (req, res) => {
       return;
     }
     res.json({ item_code: req.params.code, product_name, retail_price: price, stock_qty: qty });
-  } catch {
+  } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(500).json({ error: 'Failed to update product' });
   }
 });
@@ -108,7 +117,11 @@ router.delete('/:code', requireAdmin, async (req, res) => {
       return;
     }
     res.json({ message: 'Product deleted successfully' });
-  } catch {
+  } catch (err: any) {
+    if (err instanceof LocalDbWriteProhibitedError) {
+      res.status(503).json({ error: err.message });
+      return;
+    }
     res.status(500).json({ error: 'Failed to delete product' });
   }
 });

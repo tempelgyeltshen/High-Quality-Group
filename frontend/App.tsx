@@ -1,15 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
-import CheckoutPage from './components/checkout/CheckoutPage';
-import Inventory from './components/Inventory';
-import Employees from './components/Employees';
-import Reports from './components/Reports';
-import ManageSales from './components/ManageSales';
 import { User } from './types';
 import { api, setAuthToken, setUnauthorizedHandler } from './services/api';
 import { HelpCircle } from 'lucide-react';
+
+// Workspace screens are code-split so the initial bundle stays small; each
+// tab (and the motion library used by Inventory/Employees) loads on demand.
+const CheckoutPage = lazy(() => import('./components/checkout/CheckoutPage'));
+const Inventory = lazy(() => import('./components/Inventory'));
+const Employees = lazy(() => import('./components/Employees'));
+const Reports = lazy(() => import('./components/Reports'));
+const ManageSales = lazy(() => import('./components/ManageSales'));
 
 interface Session {
   token: string;
@@ -199,9 +202,21 @@ export default function App() {
           currentUser={currentUser} 
         />
         <main className="flex-1 flex flex-col overflow-hidden bg-[#FEF7E5] relative">
-          {renderWorkspaceContent()}
+          <Suspense fallback={<WorkspaceLoading />}>
+            {renderWorkspaceContent()}
+          </Suspense>
         </main>
       </div>
+    </div>
+  );
+}
+
+// Themed placeholder shown while a lazily-loaded workspace panel chunks in
+function WorkspaceLoading() {
+  return (
+    <div className="flex-1 p-6 bg-[#FEF7E5] flex flex-col items-center justify-center font-sans">
+      <div className="w-8 h-8 border-4 border-[#B98B23] border-t-transparent rounded-full animate-spin" />
+      <p className="mt-4 text-[10px] font-black text-[#B98B23] uppercase tracking-widest">Loading Workspace...</p>
     </div>
   );
 }
